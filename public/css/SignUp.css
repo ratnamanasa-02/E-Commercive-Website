@@ -1,0 +1,81 @@
+body {
+    background-color: white;
+    font-family: 'Times New Roman', Times, serif;
+  }
+  
+.signUp-nav-logo a{
+    text-decoration: none;
+    font-family: 'Rubik Doodle Shadow', "cursive";
+    font-size: 1.8rem;
+    font-weight: 800;
+    color:black;
+    position: relative;
+    bottom:5px;
+}
+.signUp-nav-logo p{
+    display: inline-block;
+    font-family:Arial, Helvetica, sans-serif;
+    font-weight: 100;
+    font-size:1rem;
+    color:black;
+    /* position: relative;
+    bottom:5px; */
+}
+.signUp-nav-logo{
+    padding-top:15px;
+    margin-top:11px;
+    margin-bottom:10px;
+    padding-left:5px;
+    padding-right:5px;
+    background-color: white;
+    margin-left:10px;
+    height:2.9rem;
+    text-align: center;
+    /* background-color: ; */
+}
+
+/* card */
+
+.signUp-card{
+    /* height:500px; */
+    background-color: white;
+    margin-top: 10px;
+    border:2px solid black;
+    box-shadow: 0 0 20px black;
+    margin-left:34%;
+    margin-right:34%;
+    border-radius: 10px;
+    padding: 3px 30px 0px 30px;
+    
+}
+.signUp-card-heading{
+    font-family:'Times New Roman', Times, serif; 
+    font-weight: 100; 
+    font-size: 2rem;
+    margin-top:25px;
+    margin-bottom:12px;
+}
+
+.signUp-card-form{
+    padding-bottom:35px;
+}
+
+.signUp-input{
+    height:2rem;
+    width:100%
+}
+
+.signUp-button{
+    width:98%;
+    height:2rem;
+    background-color: rgb(175,238,30);
+}
+
+#signUp-p{
+    margin-top:5px;
+    text-align: center;
+}
+#signUp-p a{
+    color: rgb(19, 64, 142);
+    font-size: 1.2rem;
+}

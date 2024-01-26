@@ -1,0 +1,27 @@
+<% if(success && success.length){ %>
+    <div class="alert alert-success alert-dismissible fade show col-6 offset-3" role="alert">
+        <%= success %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+<% } %>   
+<% if(error && error.length){ %>
+    <div class="alert alert-danger alert-dismissible fade show col-6 offset-3" role="alert">
+        <%= error %>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+<% } %>  
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var alertCloseButtons = document.querySelectorAll('.btn-close');
+
+        alertCloseButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                var alert = this.closest('.alert');
+                if (alert) {
+                    alert.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>

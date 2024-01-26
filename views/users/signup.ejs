@@ -1,0 +1,30 @@
+<% layout("/layouts/boilerplate") -%>
+    <div class="signUp-nav-logo e-border">
+        <a href="">SwiftCart<p>.in</p></a>
+    </div>
+    <div class="signUp signUp-card">
+        <h2 class=" signUp-card-heading">Create Account</h2>
+        <form action="/signup" class=" signUp-card-form" method="post">
+            <div >
+                <p><label for="username">Username</label></p>
+                <input type="text" placeholder="Enter the Username" name="username" id="username" class="signUp-input">
+            </div>
+            <div>
+                <p><label for="mobile">Mobile number</label></p>
+                <input type="number" id="mobile" name="mobile" placeholder="Enter your mobile number" class="signUp-input">
+            </div>
+            <div>
+                <p><label for="email">Email</label></p>
+                <input type="email" name="email" placeholder="Enter your Email" id="email" class="signUp-input">
+            </div>
+            <div>
+                <p><label for="password">Password</label></p>
+                <input type="password" name="password" placeholder="Enter your password" id="password" class="signUp-input">
+            </div>
+            <br>
+            <p>To verify your number, we will send you a text message with a temporary code. Message and data rates may apply.</p>
+            <button class="signUp-button">Verify mobile number</button>
+            <br><br><hr>
+            <p id="signUp-p">Already a User ? <a href="" >Log in</a></p>
+        </form>
+    </div>

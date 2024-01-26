@@ -1,0 +1,89 @@
+<% layout("/layouts/boilerplate") -%>
+<div class="show-page">
+    <div class="show-image">
+        <img src="<%= product.image %>" alt="">
+    </div>
+    <div class="show-info">
+        <h2><b><%= product.title %></b></h2>
+        <hr>
+        <!-- <div class="show-deal"><span>Deal of the Day</span></div> -->
+        <h1><b><span class="rupees">&#8377;</span><%= product.price %></b></h1>
+        <p>Inclusive of all taxes</p>
+        <hr>
+        <h3>Offers</h3>
+            <div class="offers">
+                <div class="offer-card">
+                    <h6>Payment Offers</h6>
+                    <p>Bella Vita Buy 2 Get 5%, Buy 3 Get 10%.......</p>
+                </div>
+                <div class="offer-card">
+                    <h6>Bank Offers</h6>
+                    <p>10% Instant Discount up to INR 1000 on Citibank ....</p>
+                </div>
+            </div>
+        <div class="show-methods">
+            <div>
+                <p><i class="fa-regular fa-money-bill-1"></i></p>
+                <p>Pay on <span>Delivery</span></p>
+            </div>
+            <div>
+                <p><i class="fa-solid fa-box-archive"></i></p>
+                <p>10 days <span>Returnable</span></p>
+            </div>
+            <div>
+                <p><i class="fa-solid fa-truck"></i></p>
+                <p>SwiftCart <span>Delivered</span></p>
+            </div>
+            <div>
+                <p><i class="fa-solid fa-truck-fast"></i></p>
+                <p>Free <span>Delivery</span></p>
+            </div>
+            <div>
+                <p><i class="fa-solid fa-lock"></i></p>
+                <p>Secure <span>Transaction</span></p>
+            </div>
+        </div>
+        <hr style="color:darkgrey">
+        <p><%= product.description %></p>
+    </div>
+    <div class="show-buy-opt">
+        <div class="buy_opt">
+            <h2> &#163;<%=product.price%></h2>
+            <p> <a href="#" style="text-decoration: none;">FREE DELIVERY</a> on orders dispatched by TrendSphere over ₹499.</p>
+            <span class="material-symbols-outlined">
+                <i class="fa-solid fa-location-dot"></i>
+            </span>
+            <a href="#" style="text-decoration: none;"> Delivering to Vijayawada 522502 <br>-Update Location</a>
+            <h2 style="color: rgb(18, 107, 18); margin-top: 10px;">In Stock</h2>
+            <p style="font-size: 1.08rem; margin-top: -3px;">Sold by Perfumers Perfume and Fulfilled by TrendSphere.</p>
+            <div class="quantity-container">
+                <label for="selectBox">Quantity:</label>
+                <select id="selectBox" style="padding:3px; border-radius: 3px; margin: 10px 0 20px 0; "></select>
+            </div>
+            <a href="/products/<%= product._id %>/cart" style="display: inline-block; text-decoration: none;">
+                <button style="height: 30px; width: 200px; border-radius: 8px; background-color: yellow; margin-bottom: 10px;">Add to Cart</button>
+            </a>
+            <br>
+            <a href="#" style="display: inline-block; text-decoration: none;">
+                <button style="height: 30px; width: 200px; border-radius: 8px; background-color: orange;">Buy Now</button>
+            </a>
+            
+            <p style="margin-top: 20px;color:#007185;"><i class="fa-solid fa-lock"></i> Secure Transaction</p>
+            <input type="checkbox" style="margin-left: 20px;"> Add Giftbox</p>
+            <hr style="color: darkgray;">
+            <button style="height: 30px;width: 200px;border-radius: 8px; margin-top: 10px;">Add to Wishlist</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Use JavaScript to generate options with values from 1 to 20
+    var selectBox = document.getElementById("selectBox");
+
+    for (var i = 1; i <= 20; i++) {
+        var option = document.createElement("option");
+        option.value = i;
+        option.text = i;
+        selectBox.add(option);
+    }
+</script>
