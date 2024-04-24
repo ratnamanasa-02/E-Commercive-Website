@@ -7,10 +7,12 @@ const Product = require("./models/products.js");
 const Cart = require("./models/cart.js");
 const User = require("./models/user.js");
 const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
-const { saveRedirectUrl } = require("./middleware.js");
+const { saveRedirectUrl, tempCart } = require("./middleware.js");
+const dbUrl = "mongodb://127.0.0.1:27017/swiftcart";
 
 main()
   .then(() => {
@@ -21,10 +23,23 @@ main()
   });
 
 async function main() {
-  await mongoose.connect("mongodb://127.0.0.1:27017/swiftcart");
+  await mongoose.connect(dbUrl);
 }
 
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  crypto: {
+      secret: "mysupersecret",
+      touchAfter: 24 * 3600,
+  }
+})
+
+store.on("error", () => {
+  console.log("ERROR in MONGO SESSION STORE", err);
+})
+
 const sessionOptions = {
+  store:store,
   secret: "mysupersecret",
   resave: false,
   saveUninitialized: true,
@@ -45,6 +60,18 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser()); //serialize users into the session
 passport.deserializeUser(User.deserializeUser());
 
+
+async function transferTempCartToUser(user, tempCart) {
+  for (item of tempCart) {
+      let addedProduct = new Cart({
+          user: user._id,
+          product: item.product,
+      });
+      await addedProduct.save();
+  }
+}
+
+
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
@@ -53,7 +80,7 @@ app.engine("ejs", ejsMate);
 
 app.use((req, res, next) => {
   res.locals.success = req.flash("success");
-  res.locals.error = req.flash("error");
+    res.locals.error = req.flash("error");
   next();
 });
 
@@ -69,20 +96,39 @@ app.get("/products/:id", async (req, res) => {
 });
 
 app.get("/products/:id/cart", async (req, res) => {
-  let { id } = req.params;
-  let product = await Product.findById(id);
-  let addedProduct = Cart({
-    product: product._id,
-  });
-  let newAddedCart = await addedProduct.save();
-  req.flash("success", "Succesfully Added to Cart !");
-  res.redirect(`/products/${id}`);
+    let { id } = req.params;
+    let product = await Product.findById(id);
+    if (req.isAuthenticated()) {
+        let addedProduct = Cart({
+            user: req.user._id,
+            product: product._id,
+        });
+        let newAddedCart = await addedProduct.save();
+        req.flash("success", "Succesfully Added to Cart !");
+        res.redirect(`/products/${id}`);
+    }
+    else {
+        let tempCart = req.session.tempCart || [];
+        tempCart.push({
+            product:product._id,
+        })
+      req.session.tempCart = tempCart;
+        req.flash("success", "Successfully Added to Temporary Cart!");
+        res.redirect(`/products/${id}`);
+    }
 });
 
 app.get("/cart", async (req, res) => {
-  let cartItems = await Cart.find({}).populate("product");
-  console.log(cartItems);
-  res.render("products/cart.ejs", { cartItems });
+  if (req.user) {
+    let cartItems = await Cart.find({user:req.user._id}).populate("product");
+    res.render("products/cart.ejs", { cartItems });
+  }
+  else {
+    let tempCart = req.session.tempCart || [];
+    let productIds = tempCart.map(item => item.product);
+    let cartItems = await Product.find({ _id: { $in: productIds } });
+    res.render("products/tempCart.ejs", { cartItems });
+  }
 });
 
 app.delete("/cart/:id", (req, res) => {});
@@ -101,14 +147,28 @@ app.post("/signup", (req, res) => {
   });
 });
 
+const handleTempCartBeforeLogin = (req, res, next) => {
+  console.log(tempCart);
+  if (tempCart) {
+    res.locals.tempCart = req.session.tempCart;
+  }
+  next();
+};
+
 app.post(
-    "/login",
-    saveRedirectUrl,
+  "/login",
+  handleTempCartBeforeLogin,
+  saveRedirectUrl,
     passport.authenticate("local", {
         failureRedirect: "/login",
         failureFlash: true,
     }),
   (req, res) => {
+    if (req.session.tempCart && req.session.tempCart.length > 0 && req.user) {
+      transferTempCartToUser(req.user, req.session.tempCart);
+      req.session.tempCart = []; // Clear the tempCart in the session
+    }
+
     req.flash("success", "Welcome to Wanderlust! You are logged in!");
     let redirectUrl = res.locals.redirectUrl || "/products";
     res.redirect(redirectUrl);
@@ -117,6 +177,16 @@ app.post(
 
 app.get("/login", (req, res) => {
     res.render("users/login.ejs");
+});
+
+app.get("/logout", (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    req.flash("success", "You are logged out!");
+    res.redirect("/products");
+  });
 });
 
 app.listen(8080, (req, res) => {
