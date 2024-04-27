@@ -30,7 +30,10 @@
                 <h3>$<%= item.product.price %></h3>
             </div>
         </div>
-        <a href="" method="delete" class="delete_bt" id="delete_button">Delete</a>
+        <form action="/cart/<%= item._id %>?_method=DELETE" method="POST">
+            <a href="/cart/<%= item._id %>?_method=DELETE"method="delete" method="POST" class="delete_bt" id="delete_button">Delete</a>
+          </form>
+        
         <a href="" class="delete_bt" id="wish_button">Move to Wishlist</a>
     </div>
     <% } %>

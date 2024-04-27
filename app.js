@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV != "production") {
+  require('dotenv').config();
+}
+
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -12,7 +16,8 @@ const flash = require("connect-flash");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const { saveRedirectUrl, tempCart } = require("./middleware.js");
-const dbUrl = "mongodb://127.0.0.1:27017/swiftcart";
+// const dbUrl = "mongodb://127.0.0.1:27017/swiftcart";
+const dbUrl = process.env.ATLASDB_URL;
 
 main()
   .then(() => {
@@ -131,7 +136,27 @@ app.get("/cart", async (req, res) => {
   }
 });
 
-app.delete("/cart/:id", (req, res) => {});
+app.delete('/cart/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    await Cart.findByIdAndDelete(id);
+    req.flash("success", "Item removed from cart.");
+    res.redirect('/cart');
+} catch (err) {
+    console.error("Error deleting item from cart:", err);
+    req.flash("error", "Error removing item from cart.");
+    res.redirect('/cart');
+}
+});
+
+
+
+
+
+
+
+
+
 
 app.get("/signup", (req, res) => {
   res.render("users/signup.ejs");
