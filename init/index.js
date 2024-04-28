@@ -1,24 +1,31 @@
+if (process.env.NODE_ENV !== "production") {
+    require('dotenv').config();
+}
+
 const mongoose = require("mongoose");
 const initData = require("./data.js");
-const Product=require("../models/products.js")
-
-
-main()
-    .then(() => {
-        console.log("connected to db");
-    })
-    .catch((err) => {
-        console.log(err);
-    })
+const Product = require("../models/products.js");
 
 async function main() {
-    await mongoose.connect("mongodb://127.0.0.1:27017/swiftcart");
+    try {
+        await mongoose.connect("mongodb://127.0.0.1:27017/swiftcart");
+        console.log("Connected to the database");
+
+        // Clear existing data and insert new data
+        await initDB();
+    } catch (error) {
+        console.error("Error connecting to the database:", error);
+    }
 }
 
-const initDB = async () => {
-    await Product.deleteMany({});
-    await Product.insertMany(initData.data);
-    console.log("data was initialized");
+async function initDB() {
+    try {
+        await Product.deleteMany({});
+        await Product.insertMany(initData.data);
+        console.log("Data was initialized");
+    } catch (error) {
+        console.error("Error initializing data:", error);
+    }
 }
 
-initDB();
+main();

@@ -125,8 +125,14 @@ app.get("/products/:id/cart", async (req, res) => {
 
 app.get("/cart", async (req, res) => {
   if (req.user) {
-    let cartItems = await Cart.find({user:req.user._id}).populate("product");
-    res.render("products/cart.ejs", { cartItems });
+    let cartItems = await Cart.find({ user: req.user._id }).populate("product");
+    if (cartItems.length > 0) {
+      res.render("products/cart.ejs", { cartItems });
+    }
+    else {
+      req.flash("failure", "Your Cart is Empty!");
+      res.redirect(`/products`);
+    }
   }
   else {
     let tempCart = req.session.tempCart || [];
@@ -136,26 +142,18 @@ app.get("/cart", async (req, res) => {
   }
 });
 
-app.delete('/cart/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-    await Cart.findByIdAndDelete(id);
-    req.flash("success", "Item removed from cart.");
-    res.redirect('/cart');
-} catch (err) {
-    console.error("Error deleting item from cart:", err);
-    req.flash("error", "Error removing item from cart.");
-    res.redirect('/cart');
-}
-});
-
-
-
-
-
-
-
-
+// app.delete('/cart/:id', async (req, res) => {
+//   const { id } = req.params;
+//   try {
+//     await Cart.findByIdAndDelete(id);
+//     req.flash("success", "Item removed from cart.");
+//     res.redirect('/cart');
+// } catch (err) {
+//     console.error("Error deleting item from cart:", err);
+//     req.flash("error", "Error removing item from cart.");
+//     res.redirect('/cart');
+// }
+// });
 
 
 app.get("/signup", (req, res) => {
